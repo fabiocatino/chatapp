@@ -1,0 +1,33 @@
+.container {
+	margin-top: 2rem;
+	width: 50%;
+}
+
+.top-messages {
+	padding: 1rem;
+	display: flex;
+	justify-content: flex-start;
+	background-color: #e0f7f6;
+	gap: 2rem;
+}
+
+.top-messages h6, .top-messages p {
+    color: #417c79;
+}
+
+.forgot {
+	border: 1px solid #e0f7f6;
+	padding: 1rem;
+}
+
+.forgot a {
+	color: #417c79;
+}
+
+.existing-user {
+	display: flex;
+	align-items: center;
+	padding-left: 1rem;
+	background-color: #fefaf2;
+	height: 40px;
+}
