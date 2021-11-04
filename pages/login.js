@@ -1,5 +1,5 @@
 import React from 'react';
-import { FooterMessage, HeaderMessage } from '../src/components/Layout/WelcomeMessages';
+import { FooterMessage, HeaderMessage } from '../src/components/User/WelcomeMessages';
 
 const Login = () => {
 	return (
