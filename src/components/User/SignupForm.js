@@ -45,8 +45,8 @@ export const SignupForm = () => {
 			...prevUser,
 			[placeholder.toLowerCase()]: value,
 		}));
-
-		if (placeholder === 'media') {
+		
+		if (placeholder === 'media' && files.length !== 0) {
 			setMedia(files[0])
 			setMediaPreview(URL.createObjectURL(files[0]))
 		}
