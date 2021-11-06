@@ -9,9 +9,10 @@ import {
 	InputAdornment,
 	TextField,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './SignupForm.module.css';
 import SocialMediaProfiles from './SocialMediaProfiles';
+import DragNDrop from './DragNDrop';
 
 export const SignupForm = () => {
 	const [user, setUser] = useState({
@@ -31,17 +32,24 @@ export const SignupForm = () => {
 	const [error, setError] = useState(null);
 	const [username, setUsername] = useState('');
 	const [usernameAvailable, setUsernameAvailable] = useState(false);
+	const [media, setMedia] = useState(null);
+	const [mediaPreview, setMediaPreview] = useState(null);
 	const [submitDisabled, setSubmitDisabled] = useState(true);
-
 	const { name, email, password, bio } = user;
 	const regexUsername = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
+	const inputRef = useRef();
 
 	const changeHandler = (e) => {
-		const { placeholder, value } = e.target;
+		const { placeholder, value, files } = e.target;
 		setUser((prevUser) => ({
 			...prevUser,
 			[placeholder.toLowerCase()]: value,
 		}));
+
+		if (placeholder === 'media') {
+			setMedia(files[0])
+			setMediaPreview(URL.createObjectURL(files[0]))
+		}
 	};
 
 	const submitHandler = () => {};
@@ -50,13 +58,21 @@ export const SignupForm = () => {
 		const isUser = Object.values({ name, email, password, bio }).every((item) =>
 			Boolean(item)
 		);
-		console.log(isUser);
+
 		isUser ? setSubmitDisabled(false) : setSubmitDisabled(true);
 	}, [user]);
 
 	return (
 		<Container className={styles.container}>
 			<form className={styles.form} onSubmit={submitHandler}>
+				<DragNDrop
+					inputRef={inputRef}
+					changeHandler={changeHandler}
+					mediaPreview={mediaPreview}
+					setMediaPreview={setMediaPreview}
+					setMedia={setMedia}
+				></DragNDrop>
+				
 				<TextField
 					required
 					id="name"

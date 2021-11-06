@@ -32,3 +32,9 @@
 	background-color: #fefaf2;
 	height: 40px;
 }
+
+@media screen and (max-width: 780px) {
+	.container {
+		width: 90%;
+	}
+}
