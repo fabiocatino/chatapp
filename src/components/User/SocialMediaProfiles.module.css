@@ -1,0 +1,7 @@
+.button {
+    display: flex;
+    justify-content: flex-start;
+    width: fit-content;
+    height: 50px;
+    font-size: 12px;
+}
