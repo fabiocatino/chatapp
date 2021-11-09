@@ -8,8 +8,9 @@ import {
 	TextField,
 	Alert,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loginUser } from '../../utils/authUser';
+import cookie from 'js-cookie';
 import styles from './LoginForm.module.css';
 
 export const LoginForm = () => {
@@ -20,7 +21,7 @@ export const LoginForm = () => {
 
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState(null);
-	const { name, email, password, bio } = user;
+	const { name, email } = user;
 
 	const changeHandler = (e) => {
 		const { placeholder, value } = e.target;
@@ -35,16 +36,23 @@ export const LoginForm = () => {
 		await loginUser(user, setError);
 	};
 
+	useEffect(() => {
+		const userEmail = cookie.get('userEmail');
+		if (userEmail) {
+			setUser((prevUser) => ({ ...prevUser, email: userEmail }));
+		}
+	}, []);
 	return (
 		<Container className={styles.container}>
 			<form className={styles.form} onSubmit={submitHandler}>
-				{error && <Alert severity='error'>{error}</Alert>}
+				{error && <Alert severity="error">{error}</Alert>}
 				<TextField
 					required
 					id="email"
 					placeholder="Email"
 					autoComplete="email"
 					type="email"
+					value={email ?? ''}
 					onChange={changeHandler}
 				/>
 
