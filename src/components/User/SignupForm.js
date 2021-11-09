@@ -96,7 +96,7 @@ export const SignupForm = () => {
 				setUser((prevUser) => ({ ...prevUser, username }));
 			}
 		} catch (err) {
-			setError('Username already taken');
+			// setError('Username already taken');
 			setUsernameAvailable(false);
 		}
 	};
@@ -147,6 +147,7 @@ export const SignupForm = () => {
 							setError(false);
 						} else {
 							setUsernameAvailable(false);
+							setError('Invalid characters');
 						}
 					}}
 					InputProps={{

@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
 			user: user._id,
 			followers: [],
 			following: [],
-		});
+		}).save();
 
 		const payload = { userId: user._id };
 		jwt.sign(

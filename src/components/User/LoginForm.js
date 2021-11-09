@@ -8,6 +8,7 @@ import {
 	TextField,
 } from '@mui/material';
 import React, { useState } from 'react';
+import { loginUser } from '../../utils/authUser';
 import styles from './LoginForm.module.css';
 
 export const LoginForm = () => {
@@ -28,7 +29,10 @@ export const LoginForm = () => {
 		}));
 	};
 
-	const submitHandler = () => {};
+	const submitHandler = async (e) => {
+		e.preventDefault();
+		await loginUser(user, setError);
+	};
 
 	return (
 		<Container className={styles.container}>
