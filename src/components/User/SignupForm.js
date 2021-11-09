@@ -3,16 +3,21 @@ import ErrorIcon from '@mui/icons-material/Error';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
+	Alert,
 	Button,
 	Container,
 	IconButton,
 	InputAdornment,
 	TextField,
 } from '@mui/material';
-import React, { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import { registerUser } from '../../utils/authUser';
+import baseUrl from '../../utils/baseUrl';
+import uploadPic from '../../utils/uploadPicToCloudinary';
+import DragNDrop from './DragNDrop';
 import styles from './SignupForm.module.css';
 import SocialMediaProfiles from './SocialMediaProfiles';
-import DragNDrop from './DragNDrop';
 
 export const SignupForm = () => {
 	const [user, setUser] = useState({
@@ -29,7 +34,7 @@ export const SignupForm = () => {
 
 	const [showSocialLinks, setShowSocialLinks] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
-	const [error, setError] = useState(null);
+	const [error, setError] = useState('');
 	const [username, setUsername] = useState('');
 	const [usernameAvailable, setUsernameAvailable] = useState(false);
 	const [media, setMedia] = useState(null);
@@ -38,6 +43,7 @@ export const SignupForm = () => {
 	const { name, email, password, bio } = user;
 	const regexUsername = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/;
 	const inputRef = useRef();
+	let cancel;
 
 	const changeHandler = (e) => {
 		const { placeholder, value, files } = e.target;
@@ -45,14 +51,28 @@ export const SignupForm = () => {
 			...prevUser,
 			[placeholder.toLowerCase()]: value,
 		}));
-		
+
 		if (placeholder === 'media' && files.length !== 0) {
-			setMedia(files[0])
-			setMediaPreview(URL.createObjectURL(files[0]))
+			setMedia(files[0]);
+			setMediaPreview(URL.createObjectURL(files[0]));
 		}
 	};
 
-	const submitHandler = () => {};
+	const submitHandler = async (e) => {
+		e.preventDefault();
+
+		let profilePicUrl;
+
+		if (media !== null) {
+			profilePicUrl = await uploadPic(media);
+		}
+
+		if (media !== null && !profilePicUrl) {
+			return setError('Error while uploading Image');
+		}
+
+		await registerUser(user, profilePicUrl, setError);
+	};
 
 	useEffect(() => {
 		const isUser = Object.values({ name, email, password, bio }).every((item) =>
@@ -62,9 +82,39 @@ export const SignupForm = () => {
 		isUser ? setSubmitDisabled(false) : setSubmitDisabled(true);
 	}, [user]);
 
+	const checkUsername = async () => {
+		try {
+			cancel && cancel();
+
+			const CancelToken = axios.CancelToken;
+
+			const res = await axios.get(`${baseUrl}/api/signup/${username}`, {
+				cancelToken: new CancelToken((canceler) => (cancel = canceler)),
+			});
+			if (res.data === 'Available') {
+				setUsernameAvailable(true);
+				setUser((prevUser) => ({ ...prevUser, username }));
+			}
+		} catch (err) {
+			setError('Username already taken');
+			setUsernameAvailable(false);
+		}
+	};
+
+	useEffect(() => {
+		const identifier = setTimeout(() => {
+			username === '' ? setUsernameAvailable(false) : checkUsername();
+		}, 500);
+
+		return () => {
+			clearTimeout(identifier);
+		};
+	}, [username]);
+
 	return (
 		<Container className={styles.container}>
 			<form className={styles.form} onSubmit={submitHandler}>
+				{error && <Alert severity="error">{error}</Alert>}
 				<DragNDrop
 					inputRef={inputRef}
 					changeHandler={changeHandler}
@@ -72,7 +122,7 @@ export const SignupForm = () => {
 					setMediaPreview={setMediaPreview}
 					setMedia={setMedia}
 				></DragNDrop>
-				
+
 				<TextField
 					required
 					id="name"
@@ -97,7 +147,6 @@ export const SignupForm = () => {
 							setError(false);
 						} else {
 							setUsernameAvailable(false);
-							setError(true);
 						}
 					}}
 					InputProps={{

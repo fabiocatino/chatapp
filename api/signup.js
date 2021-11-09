@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const UserModel = require('../src/models/UserSchema');
-const ProfileModel = require('../src/models/ProfileSchema');
-const FollowerModel = require('../src/models/FollowerSchema');
+const UserModel = require('../src/models/User');
+const ProfileModel = require('../src/models/Profile');
+const FollowerModel = require('../src/models/Follower');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const isEmail = require('validator/lib/isEmail');
@@ -17,7 +17,7 @@ router.get('/:username', async (req, res) => {
 		if (username.length < 1) return res.status(401).send('Invalid');
 		if (!regexUsername.test(username)) return res.status(401).send('Invalid');
 
-		const user = await UserModel.findOne({ username: username.toLowerCase });
+		const user = await UserModel.findOne({ username: username.toLowerCase() });
 
 		if (user) return res.status(401).send('Username already taken');
 
