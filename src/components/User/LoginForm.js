@@ -6,6 +6,7 @@ import {
 	IconButton,
 	InputAdornment,
 	TextField,
+	Alert,
 } from '@mui/material';
 import React, { useState } from 'react';
 import { loginUser } from '../../utils/authUser';
@@ -37,6 +38,7 @@ export const LoginForm = () => {
 	return (
 		<Container className={styles.container}>
 			<form className={styles.form} onSubmit={submitHandler}>
+				{error && <Alert severity='error'>{error}</Alert>}
 				<TextField
 					required
 					id="email"
