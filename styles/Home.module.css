@@ -17,6 +17,11 @@
 	gap: 1rem;
 }
 
+.add-location {
+	margin-left: 3.5rem;
+	width: 100%;
+}
+
 .searchbar {
 	border-left: 1px solid lightgray;
 	position: absolute;
